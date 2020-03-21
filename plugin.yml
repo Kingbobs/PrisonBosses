@@ -1,0 +1,5 @@
+name: FallenHeroes
+version: 1.2.1
+api: 3.8.4
+main: Bosses\Loader
+author: RealAstro fixed by Kirito
