@@ -6,6 +6,7 @@ namespace Bosses;
 
 use Bosses\Entities\ForgottenKing;
 use Bosses\Entities\ForgottenNome;
+use Bosses\Entities\ForgottenSkeleton;
 use pocketmine\entity\Entity;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDeathEvent;
@@ -38,6 +39,21 @@ class EventListener implements Listener
            		 $player->getInventory()->removeItem($bone);
 				}
         }
+	    
+        if ($item->getId() === Item::BONE && $item->getDamage() === 1) {
+            if (!$item->hasCustomBlockData()) return;
+            $boss = $item->getCustomBlockData()->getString("boss");
+            $bone = Item::get(Item::BONE, 1, 1);
+            $touch = $event->getTouchVector();
+            $spawnAt = $player->add($touch->getX(), $touch->getY(), $touch->getZ());
+            $entity = Entity::createEntity($boss, $player->getLevel(), Entity::createBaseNBT($spawnAt));
+				if($entity !== null){
+            	 $entity->setNameTag("§r§cFallen§fSkeletonHero§3: \n§a" . $this->getHealth() . " §b<-§1::§b-> §c" . $this->getMaxHealth());
+           	 	 $entity->setNameTagAlwaysVisible(false);
+            	    $entity->spawnToAll();
+           		 $player->getInventory()->removeItem($bone);
+				}
+        }
 
         if ($item->getId() === Item::BONE && $item->getDamage() === 2) {
             if (!$item->hasCustomBlockData()) return;
@@ -57,15 +73,23 @@ class EventListener implements Listener
 
     public function onDeath(EntityDeathEvent $event) {
         $nome = [
-            Item::get(339, 22, mt_rand(1, 2))->setCustomName("§r§l§a500000Money Note"),
-            Item::get(339, 23, 1)->setCustomName("§r§l§e50Token Note"),
-            Item::get(351, 5, mt_rand(1, 3))->setCustomName("§r§l§fGkit Gem: §dCrypto"),
+            Item::get(434, 0, mt_rand(1, 2))->setCustomName("§r§cNome Heart"),
+            Item::get(264, 0, mt_rand(5, 100))->setCustomName("§r§l§bGems"),
+	    Item::get(388, 0, mt_rand(5, 100))->setCustomName("§r§l§aGems")
+        ];
+	    
+        $skeleton = [
+            Item::get(352, 0, mt_rand(1, 3))->setCustomName("§r§fBoss Bones"),
+            Item::get(397, 0, 1)->setCustomName("§r§f§lSkeleton Boss Head"),
+            Item::get(261, 0, 1)->setCustomName("§r§bSkeleton Boss BOW"),
+            Item::get(262, 27, mt_rand(2, 100))->setCustomName("§r§bSkeleton Boss Arrows")
         ];
 
         $king = [
-            Item::get(339, 20, mt_rand(1, 2))->setCustomName("§r§l§a1000000Money Note"),
-            Item::get(339, 21, mt_rand(0, 1))->setCustomName("§r§l§e100Token Note"),
-            Item::get(264, 1, 1)->setCustomName("§r§l§fGkit Gem: §8Reaper")
+            Item::get(437, 0, mt_rand(1, 2))->setCustomName("§r§eKings §bB§fr§be§fa§bt§fh§r"),
+            Item::get(450, 0, mt_rand(0, 1))->setCustomName("§r§l§eKings §l§0Soul§r"),
+            Item::get(347, 0, 1)->setCustomName("§r§l§eKings §l§3Watch§r"),
+            Item::get(397, 3, 1)->setCustomName("§r§3Kings Head")
         ];
         $boss = $event->getEntity();
         $cause = $event->getEntity()->getLastDamageCause();
