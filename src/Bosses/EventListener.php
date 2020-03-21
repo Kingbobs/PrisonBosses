@@ -6,7 +6,6 @@ namespace Bosses;
 
 use Bosses\Entities\ForgottenKing;
 use Bosses\Entities\ForgottenNome;
-use Bosses\Entities\ForgottenSkeleton;
 use pocketmine\entity\Entity;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDeathEvent;
@@ -39,6 +38,22 @@ class EventListener implements Listener
            		 $player->getInventory()->removeItem($bone);
 				}
         }
+
+        if ($item->getId() === Item::BONE && $item->getDamage() === 2) {
+            if (!$item->hasCustomBlockData()) return;
+            $boss = $item->getCustomBlockData()->getString("boss");
+            $bone = Item::get(Item::BONE, 2, 1);
+            $touch = $event->getTouchVector();
+            $spawnAt = $player->add($touch->getX(), $touch->getY(), $touch->getZ());
+            $entity = Entity::createEntity($boss, $player->getLevel(), Entity::createBaseNBT($spawnAt));
+				 if($entity !== null){
+             	$entity->setNameTag("§r§l§fFallenHero: §8Reaper\n" . $entity->getHealth() . "/" . $entity->getMaxHealth());
+           	   $entity->setNameTagAlwaysVisible(false);
+             	$entity->spawnToAll();
+           		 $player->getInventory()->removeItem($bone);
+ 				}
+        }
+    }
 	    
         if ($item->getId() === Item::BONE && $item->getDamage() === 1) {
             if (!$item->hasCustomBlockData()) return;
@@ -76,13 +91,6 @@ class EventListener implements Listener
             Item::get(434, 0, mt_rand(1, 2))->setCustomName("§r§cNome Heart"),
             Item::get(264, 0, mt_rand(5, 100))->setCustomName("§r§l§bGems"),
 	    Item::get(388, 0, mt_rand(5, 100))->setCustomName("§r§l§aGems")
-        ];
-	    
-        $skeleton = [
-            Item::get(352, 0, mt_rand(1, 3))->setCustomName("§r§fBoss Bones"),
-            Item::get(397, 0, 1)->setCustomName("§r§f§lSkeleton Boss Head"),
-            Item::get(261, 0, 1)->setCustomName("§r§bSkeleton Boss BOW"),
-            Item::get(262, 27, mt_rand(2, 100))->setCustomName("§r§bSkeleton Boss Arrows")
         ];
 
         $king = [
