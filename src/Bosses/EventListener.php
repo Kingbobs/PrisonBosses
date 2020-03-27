@@ -53,7 +53,6 @@ class EventListener implements Listener
            		 $player->getInventory()->removeItem($bone);
  				}
         }
-    }
 	    
         if ($item->getId() === Item::BONE && $item->getDamage() === 1) {
             if (!$item->hasCustomBlockData()) return;
